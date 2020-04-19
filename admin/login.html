@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>EGM - Admin Login</title>
+
+  <!-- Bootstrap v4.4.1 -->
+  <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/bootstrap.min.css">
+
+  <!-- favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="../images/favicon.jpg">
+</head>
+
+<body class="bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+        <div class="text-center mt-5">
+          <img class="mb-2" src="../images/logo.jpg" alt="" width="100" height="100">
+        </div>
+        <h1 class="text-center">Admin Login</h1>
+        <hr>
+        <form id="login_form">
+          <div id="alert_error_message" class="alert alert-danger collapse" role="alert">
+            Incorrect username or password.
+          </div>
+          <div class="mb-3">
+            <label for="username">Username *</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username"
+              maxlength="50">
+            <div id="username_error_message" class="text-danger"></div>
+          </div>
+          <div class="mb-3">
+            <label for="password">Password *</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"
+              maxlength="50">
+            <div id="password_error_message" class="text-danger"></div>
+          </div>
+          <hr class="mb-4">
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+        </form>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; 2020 <a target="blank"
+            href="http://www.egavilanmedia.com/">egavilanmedia.com</p>
+      </div>
+      <div class="col-sm-4"></div>
+    </div>
+  </div>
+  <script src="../vendor/jquery-3.4.1.min.js"></script>
+  <script>
+    $(document).ready(function () {
+
+      $(document).keypress(function (e) {
+        if (e.which == 13) {
+          loginUser();
+        }
+      });
+
+      $('#login_form').on('submit', function (event) {
+        event.preventDefault();
+        loginUser();
+      });
+
+      var error_username = false;
+      var error_password = false;
+
+      $("#username").focusout(function () {
+        check_username();
+      });
+      $("#password").focusout(function () {
+        check_password();
+      });
+
+      function check_username() {
+
+        if ($.trim($('#username').val()) == '') {
+          $("#username_error_message").html("Username is a required field.");
+          $("#username_error_message").show();
+          $("#username").addClass("is-invalid");
+          error_username = true;
+        } else {
+          $("#username_error_message").hide();
+          $("#username").removeClass("is-invalid");
+        }
+      }
+
+      function check_password() {
+
+        if ($.trim($('#password').val()) == '') {
+          $("#password_error_message").html("Password is a required field.");
+          $("#password_error_message").show();
+          $("#password").addClass("is-invalid");
+          error_password = true;
+        } else {
+          $("#password_error_message").hide();
+          $("#password").removeClass("is-invalid");
+        }
+      }
+
+      function loginUser() {
+
+        error_username = false;
+        error_password = false;
+
+        check_username();
+        check_password();
+
+        if (error_username == false && error_password == false) {
+
+          var dataAction = {
+            "action": "login_admin"
+          };
+
+          data = $('#login_form').serialize();
+          data = data + "&" + $.param(dataAction);
+
+          $.ajax({
+            type: "POST",
+            data: data,
+            url: "profile_action.php",
+            success: function (data) {
+              if (data == 1) {
+                window.location = "index.php";
+              } else if (data == 0) {
+                $("#alert_error_message").show();
+              } else {
+                alert("Oops! Something went wrong.");
+              }
+            }
+          });
+        } else {
+          $("#alert_error_message").show();
+          return false;
+        }
+      }
+    });
+
+  </script>
+</body>
+
+</html>
